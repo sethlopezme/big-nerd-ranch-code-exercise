@@ -1,22 +1,21 @@
 package com.bignerdranch.android.blognerdranch.feature.list
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
+import android.view.View
 import com.bignerdranch.android.blognerdranch.R
-import com.bignerdranch.android.blognerdranch.data.blog.BlogService
-import com.bignerdranch.android.blognerdranch.data.blog.model.PostMetadata
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_post_list.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
 class PostListActivity : DaggerAppCompatActivity() {
+    lateinit var viewModel: PostListViewModel
     @Inject
-    lateinit var blogService: BlogService
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,20 +24,12 @@ class PostListActivity : DaggerAppCompatActivity() {
         post_recyclerview.layoutManager = LinearLayoutManager(this)
         post_recyclerview.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
-        val postMetadataRequest = blogService.getPostMetadata()
-        postMetadataRequest.enqueue(object: Callback<List<PostMetadata>?> {
-            override fun onFailure(call: Call<List<PostMetadata>?>, t: Throwable) {
-                Log.e(TAG, "Failed to load postMetadata", t)
-            }
-
-            override fun onResponse(call: Call<List<PostMetadata>?>, response: Response<List<PostMetadata>?>) {
-                Log.i(TAG, "Loaded postMetadata $response")
-                post_recyclerview.adapter = PostListAdapter(response.body()!!)
-            }
-        })
-    }
-
-    companion object {
-        const val TAG = "PostListActivity"
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(PostListViewModel::class.java).apply {
+            postMetadataList.observe(this@PostListActivity, Observer {
+                progressBar.visibility = View.GONE
+                post_recyclerview.visibility = View.VISIBLE
+                post_recyclerview.adapter = PostListAdapter(it!!)
+            })
+        }
     }
 }

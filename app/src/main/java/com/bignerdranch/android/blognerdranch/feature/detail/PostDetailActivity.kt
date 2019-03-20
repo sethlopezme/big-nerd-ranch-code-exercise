@@ -1,48 +1,39 @@
 package com.bignerdranch.android.blognerdranch.feature.detail
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import com.bignerdranch.android.blognerdranch.R
-import com.bignerdranch.android.blognerdranch.data.blog.BlogService
 import com.bignerdranch.android.blognerdranch.data.blog.model.Post
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_post.*
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
 class PostDetailActivity : DaggerAppCompatActivity() {
-    private var postId: Int = 0
-
+    lateinit var viewModel: PostDetailViewModel
     @Inject
-    lateinit var blogService: BlogService
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
 
-        postId = intent.getIntExtra(EXTRA_POST_ID, 0)
-
-        val postRequest = blogService.getPost(postId)
-        postRequest.enqueue(object: Callback<Post?> {
-            override fun onFailure(call: Call<Post?>, t: Throwable) {
-                Log.e(TAG, "Failed to load post", t)
-            }
-
-            override fun onResponse(call: Call<Post?>, response: Response<Post?>) {
-                Log.i(TAG, "Loaded post $response")
-                updateUI(response.body()!!)
-            }
-        })
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(PostDetailViewModel::class.java).apply {
+            load(intent.getIntExtra(EXTRA_POST_ID, 0))
+            post.observe(this@PostDetailActivity, Observer { updateUI(it!!) })
+        }
     }
 
     private fun updateUI(post: Post) {
+        progressBar.visibility = View.GONE
+        article_nestedScrollView.visibility = View.VISIBLE
         title_textView.text = post.metadata?.title
         author_textView.text = post.metadata?.author?.name
         date_textView.text = post.metadata?.publishDate?.let { publishDate ->
@@ -55,7 +46,6 @@ class PostDetailActivity : DaggerAppCompatActivity() {
     }
 
     companion object {
-        const val TAG = "PostDetailActivity"
         const val EXTRA_POST_ID = "postID"
 
         fun newIntent(context: Context, id: Int): Intent {
