@@ -1,13 +1,12 @@
-package com.bignerdranch.android.blognerdranch
+package com.bignerdranch.android.blognerdranch.data.blog
 
-import com.bignerdranch.android.blognerdranch.model.Post
-import com.bignerdranch.android.blognerdranch.model.PostMetadata
+import com.bignerdranch.android.blognerdranch.data.blog.model.Post
+import com.bignerdranch.android.blognerdranch.data.blog.model.PostMetadata
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface BlogService {
-
     @GET("post-metadata")
     fun getPostMetadata(): Call<List<PostMetadata>>
 

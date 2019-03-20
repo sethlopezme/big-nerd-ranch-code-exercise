@@ -1,35 +1,27 @@
 package com.bignerdranch.android.blognerdranch.feature.list
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
-import com.bignerdranch.android.blognerdranch.BlogService
 import com.bignerdranch.android.blognerdranch.R
-import com.bignerdranch.android.blognerdranch.model.PostMetadata
+import com.bignerdranch.android.blognerdranch.data.blog.BlogService
+import com.bignerdranch.android.blognerdranch.data.blog.model.PostMetadata
+import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.android.synthetic.main.activity_post_list.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class PostListActivity : AppCompatActivity() {
-
-    private var postRecyclerView: RecyclerView? = null
+class PostListActivity : DaggerAppCompatActivity() {
+    @Inject
+    lateinit var blogService: BlogService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_list)
 
-        postRecyclerView = findViewById(R.id.post_recyclerview)
-        postRecyclerView?.layoutManager = LinearLayoutManager(this)
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8106/") // "localhost" is the emulator's host. 10.0.2.2 goes to your computer
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val blogService = retrofit.create(BlogService::class.java)
+        post_recyclerview.layoutManager = LinearLayoutManager(this)
 
         val postMetadataRequest = blogService.getPostMetadata()
         postMetadataRequest.enqueue(object: Callback<List<PostMetadata>?> {
@@ -39,7 +31,7 @@ class PostListActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<List<PostMetadata>?>, response: Response<List<PostMetadata>?>) {
                 Log.i(TAG, "Loaded postMetadata $response")
-                postRecyclerView?.adapter = PostListAdapter(response.body()!!)
+                post_recyclerview.adapter = PostListAdapter(response.body()!!)
             }
         })
     }

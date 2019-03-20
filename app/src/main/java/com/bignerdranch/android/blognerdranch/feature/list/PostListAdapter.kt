@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.bignerdranch.android.blognerdranch.data.blog.model.PostMetadata
 import com.bignerdranch.android.blognerdranch.feature.detail.PostDetailActivity
-import com.bignerdranch.android.blognerdranch.model.PostMetadata
 
 class PostListAdapter(var postMetadata: List<PostMetadata>) : RecyclerView.Adapter<PostListAdapter.PostViewHolder>() {
     override fun getItemCount(): Int = postMetadata.size

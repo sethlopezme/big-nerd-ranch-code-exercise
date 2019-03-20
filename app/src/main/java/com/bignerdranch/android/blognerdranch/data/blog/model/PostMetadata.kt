@@ -1,4 +1,4 @@
-package com.bignerdranch.android.blognerdranch.model
+package com.bignerdranch.android.blognerdranch.data.blog.model
 
 class PostMetadata {
     var postId: Int? = null

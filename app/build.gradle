@@ -14,9 +14,9 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        def BNR_BASE_URL = "BASE_URL"
+        def BNR_BASE_URL = "BNR_BASE_URL"
         debug {
-            buildConfigField "String", BNR_BASE_URL, "\"http://10.0.2.2:8106/\""
+            buildConfigField "String", BNR_BASE_URL, "\"http://10.0.2.2:8106/\"" // "localhost" is the emulator's host. 10.0.2.2 goes to your computer
         }
         release {
             minifyEnabled false

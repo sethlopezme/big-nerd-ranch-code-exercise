@@ -3,41 +3,28 @@ package com.bignerdranch.android.blognerdranch.feature.detail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.TextView
-import com.bignerdranch.android.blognerdranch.BlogService
 import com.bignerdranch.android.blognerdranch.R
-import com.bignerdranch.android.blognerdranch.model.Post
+import com.bignerdranch.android.blognerdranch.data.blog.BlogService
+import com.bignerdranch.android.blognerdranch.data.blog.model.Post
+import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.android.synthetic.main.activity_post.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class PostDetailActivity : AppCompatActivity() {
-
+class PostDetailActivity : DaggerAppCompatActivity() {
     private var postId: Int = 0
 
-    private var postTitle: TextView? = null
-    private var postAuthor: TextView? = null
-    private var postBody: TextView? = null
+    @Inject
+    lateinit var blogService: BlogService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
 
-        postTitle = findViewById(R.id.title_textview)
-        postAuthor = findViewById(R.id.author_textView)
-        postBody = findViewById(R.id.body_textView)
-
         postId = intent.getIntExtra(EXTRA_POST_ID, 0)
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8106/") // "localhost" is the emulator's host. 10.0.2.2 goes to your computer
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val blogService = retrofit.create(BlogService::class.java)
 
         val postRequest = blogService.getPost(postId)
         postRequest.enqueue(object: Callback<Post?> {
@@ -53,14 +40,13 @@ class PostDetailActivity : AppCompatActivity() {
     }
 
     private fun updateUI(post: Post) {
-        postTitle?.text = post.metadata?.title
-        postAuthor?.text = post.metadata?.author?.name
-        postBody?.text = post.body
+        title_textview.text = post.metadata?.title
+        author_textView.text = post.metadata?.author?.name
+        body_textView.text = post.body
     }
 
     companion object {
         const val TAG = "PostDetailActivity"
-
         const val EXTRA_POST_ID = "postID"
 
         fun newIntent(context: Context, id: Int): Intent {
