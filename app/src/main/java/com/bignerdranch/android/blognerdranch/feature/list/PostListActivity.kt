@@ -1,13 +1,13 @@
-package com.bignerdranch.android.blognerdranch.controller.list
+package com.bignerdranch.android.blognerdranch.feature.list
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.bignerdranch.android.blognerdranch.BlogService
-import com.bignerdranch.android.blognerdranch.model.PostMetadata
 import com.bignerdranch.android.blognerdranch.R
+import com.bignerdranch.android.blognerdranch.model.PostMetadata
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,7 +39,7 @@ class PostListActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<List<PostMetadata>?>, response: Response<List<PostMetadata>?>) {
                 Log.i(TAG, "Loaded postMetadata $response")
-                postRecyclerView?.adapter = PostAdapter(response.body()!!)
+                postRecyclerView?.adapter = PostListAdapter(response.body()!!)
             }
         })
     }
