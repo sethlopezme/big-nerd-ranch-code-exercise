@@ -1,6 +1,7 @@
 package com.bignerdranch.android.blognerdranch.feature.list
 
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import com.bignerdranch.android.blognerdranch.R
@@ -22,6 +23,7 @@ class PostListActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_post_list)
 
         post_recyclerview.layoutManager = LinearLayoutManager(this)
+        post_recyclerview.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
         val postMetadataRequest = blogService.getPostMetadata()
         postMetadataRequest.enqueue(object: Callback<List<PostMetadata>?> {

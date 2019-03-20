@@ -9,6 +9,9 @@ import com.bignerdranch.android.blognerdranch.data.blog.BlogService
 import com.bignerdranch.android.blognerdranch.data.blog.model.Post
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_post.*
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,8 +43,14 @@ class PostDetailActivity : DaggerAppCompatActivity() {
     }
 
     private fun updateUI(post: Post) {
-        title_textview.text = post.metadata?.title
+        title_textView.text = post.metadata?.title
         author_textView.text = post.metadata?.author?.name
+        date_textView.text = post.metadata?.publishDate?.let { publishDate ->
+            // TODO: pull into common utility/extension function
+            DateTimeFormatter.ofPattern("MMM dd, u")
+                .withZone(ZoneId.systemDefault())
+                .format(Instant.parse(publishDate))
+        }
         body_textView.text = post.body
     }
 

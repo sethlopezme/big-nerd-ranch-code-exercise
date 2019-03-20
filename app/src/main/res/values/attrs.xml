@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="textAppearanceArticleAuthor" format="reference" />
+    <attr name="textAppearanceArticleBody" format="reference" />
+    <attr name="textAppearanceArticleTitle" format="reference" />
+    <attr name="textAppearanceArticleTitleLarge" format="reference" />
+    <attr name="textAppearanceArticleMetadata" format="reference" />
+
+</resources>
